@@ -1,0 +1,11 @@
+,id,primeiro_nome,ultimo_nome,salario,diretoria_id
+0,1,Ana,Silva,7000,1
+1,2,Bruno,Oliveira,4500,1
+2,3,Carlos,Santos,8000,2
+3,4,Diana,Costa,3500,2
+4,5,Eduardo,Pereira,9000,3
+5,6,Fernanda,Souza,2000,3
+6,7,Gabriel,Lima,5000,3
+7,8,Helena,Fernandes,7500,3
+8,9,Igor,Carvalho,3000,4
+9,10,Juliana,Rodrigues,6500,4

@@ -1,0 +1,78 @@
+SOLUÇÕES POSSÍVEIS
+
+
+
+DESAFIO 1:
+
+# Traz a informação das diretorias para o dataset dos funcionarios
+funcionarios_dir = pd.merge(funcionarios, diretorias, left_on='diretoria_id', right_on='id', suffixes=('_func', '_dir'))
+
+# Filtrando Funcionários com Salário Acima de 5 Mil
+funcionarios_acima_5k = funcionarios_dir[funcionarios_dir['salario'] > 5000]
+
+# Contando Funcionários por Diretoria
+total_funcionarios_acima_5k_por_diretoria = funcionarios_acima_5k.groupby('nome')['id_func'].count().reset_index(name='total_funcionarios_acima_5k')
+
+# Calculando o Total de Funcionários por Diretoria
+total_funcionarios_por_diretoria = dados_juntos.groupby('nome')['id_func'].count().reset_index(name='total_funcionarios')
+
+# Juntando os dados e calculando o percentual
+analise_diretorias = pd.merge(total_funcionarios_acima_5k_por_diretoria, total_funcionarios_por_diretoria, on='nome')
+analise_diretorias['percentual_acima_5k'] = (analise_diretorias['total_funcionarios_acima_5k'] / analise_diretorias['total_funcionarios']) * 100
+
+# Resultado Final
+resultado_final = analise_diretorias[['nome', 'percentual_acima_5k', 'total_funcionarios_acima_5k']]
+
+print(resultado_final)
+
+
+
+​DESAFIO 2:
+
+# RESOLUCAO PARTE 1
+# Pivoteando o dataset para ter as notas de cada "Provão" como colunas separadas
+provao_pivot = provao_notas.pivot_table(index=['id_aluno', 'turma_id'],
+                                                    columns='id_provao',
+                                                    values='nota_provao').reset_index()
+
+# Renomeando as colunas para corresponder ao formato desejado
+provao_pivot.columns = ['id_aluno', 'turma_id', 'nota_provao_1', 'nota_provao_2', 'nota_provao_3', 'nota_provao_4']
+
+# Calculando se o aluno foi aprovado (média > 50 em todos os provões)
+provao_pivot['aprovado'] = provao_pivot[['nota_provao_1', 'nota_provao_2', 'nota_provao_3', 'nota_provao_4']].mean(axis=1) > 50
+
+# Saída desejada com notas e status de aprovação
+provao_pivot
+
+
+# RESOLUCAO PARTE 2
+# Contando o número de reprovados por turma
+contagem_reprovados = provao_pivot.groupby('turma_id')['aprovado'].apply(lambda x: (x == False).sum())
+
+# Identificando a turma com o maior número de reprovados
+turma_mais_reprovados = contagem_reprovados.idxmax()
+
+# Turma com mais reprovados
+turma_mais_reprovados
+
+
+DESAFIO 3:
+
+# Agrupando os dados por id_cliente
+agrupado = compras.groupby('id_cliente').agg(
+    qtd_compras=('id_cliente', 'count'),
+    valor_total_compras =('valor_compra', 'sum'),
+    valor_medio_compras =('valor_compra', 'mean'),
+    data_ultima_compra=('data_da_compra', 'max')
+).reset_index()
+
+# Tabela resultante
+agrupado
+
+# Estado com maior receita total
+estado_maior_receita = compras.groupby('estado')['valor_compra'].sum().idxmax()
+print(estado_maior_receita)
+
+# Estado com mais vendas em unidades
+estado_mais_unidades = compras['estado'].value_counts().idxmax()
+print(estado_mais_unidades)
